@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sqlite-restore-custom
+  namespace: pra
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: restore
+          image: alpine
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              TIMESTAMP="1772097901" # Remplacer cette valeur par le timestamp souhaité
+              BACKUP_FILE="/backup/app-${TIMESTAMP}.db"
+              
+              if [ -f "$BACKUP_FILE" ]; then
+                echo "Restauration du backup : $BACKUP_FILE"
+                cp $BACKUP_FILE /data/app.db
+                echo "Restauration terminee avec succes"
+              else
+                echo "ERREUR : Le fichier $BACKUP_FILE n'existe pas"
+                echo "Backups disponibles :"
+                ls -lh /backup/
+                exit 1
+              fi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: backup
+              mountPath: /backup
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: pra-data
+        - name: backup
+          persistentVolumeClaim:
+            claimName: pra-backup

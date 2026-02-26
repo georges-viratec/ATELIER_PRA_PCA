@@ -45,3 +45,43 @@ Architecture recommandée :
 * Monitoring : Prometheus/Grafana avec alerting sur échec backup et dérive RPO. Tests de restauration automatisés.
 * Disaster Recovery : Cluster secondaire dans une autre région avec réplication asynchrone et procédure de bascule.
 * Sécurité : Chiffrement au repos et en transit, secrets managés, network policies.
+
+
+
+
+
+## Test rapide avec Makefile
+
+Pour faciliter les tests, un Makefile est fourni.
+
+### Installation et deploiement complet
+```bash
+make all
+make add-data
+make test-routes
+```
+
+### Tests des scenarios
+```bash
+make test-pca
+make test-pra
+```
+
+### Atelier 1 : Route /status
+```bash
+make test-status
+```
+
+### Atelier 2 : Restauration avec choix
+```bash
+make list-backups
+make restore TIMESTAMP=<timestamp_choisi>
+```
+
+### Autres commandes
+```bash
+make help
+make status
+make clean
+make destroy
+```
